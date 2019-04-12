@@ -1,0 +1,25 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+    "settings":
+    {
+        "tab_size": 8
+    },
+    "build_systems":
+    [
+        {
+            "name": "Make - Disk",
+            "working_dir": "${project_path:${folder}}",
+            "shell_cmd": "make disk"
+        },
+        {
+            "name": "Run",
+            "working_dir": "${project_path:${folder}}",
+            "shell_cmd": "make run"
+        }
+    ]
+}

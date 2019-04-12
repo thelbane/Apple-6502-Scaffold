@@ -1,0 +1,217 @@
+; Source:
+; Assembly Cookbook for the Apple II/IIe part two by Don Lancaster
+; https://www.americanradiohistory.com/Archive-Don-Lancaster/aacb2.pdf
+
+WNDLFT                  EQU $20         ; SCROLL WINDOW LEFT
+WNDWDTH                 EQU $21         ; SCROLL WINDOW WIDTH
+WNDTOP                  EQU $22         ; SCROLL WINDOW TOP
+WNDBOT                  EQU $23         ; SCROLL WINDOW BOTTOM
+CH                      EQU $24         ; CURSOR HORIZONTAL
+CV                      EQU $25         ; CURSOR VERTICAL
+GBASL                   EQU $26         ; LORES BASE LOW
+GBASH                   EQU $27         ; LORES BASE HIGH
+BASL                    EQU $28         ; TEXT BASE LOW
+BASH                    EQU $29         ; TEXT BASE HIGH
+HEND                    EQU $2C         ; LORES RIGHT END H LINE
+VBOT                    EQU $2D         ; LORES BOTTOM OF V LINE
+COLOR                   EQU $30         ; LORES COLOR
+INVFLG                  EQU $31         ; NORMAL/INVERSE/FLASH (FF,7F,3F)
+PROMPT                  EQU $33         ; HOLDS PROMPT SYMBOL
+CSWL                    EQU $36         ; OUTPUT CHARACTER HOOK LOW
+CSWH                    EQU $37         ; OUTPUT CHARACTER HOOK HIGH
+KSWL                    EQU $38         ; INPUT CHARACTER HOOK LOW
+KSWH                    EQU $39         ; INPUT CHARACTER HOOK HIGH
+RNDL                    EQU $4E         ; RANDOM NUMBER LOW
+RNDH                    EQU $4F         ; RANDOM NUMBER HIGH
+
+STACK                   EQU $0100       ; STACK PAGE ACCESS
+
+KEYBUF                  EQU $0200       ; KEYBUFFER START
+
+DOSWRM                  EQU $03D0       ; DOS WARM START JMP
+DOSCLD                  EQU $03D3       ; DOS COLD START JMP
+DOSFLM                  EQU $03D6       ; DOS FILE MANAGER JUMP
+DOSRWTS                 EQU $03D9       ; DOS RWTS JUMP
+DOSIPRM                 EQU $03DC       ; DOS FILE PARAMETER FIND JUMP
+DOSRWLS                 EQU $03E3       ; DOS RWTS PARAMETER FIND JUMP
+DOSHOOK                 EQU $03EA       ; DOS HOOK RECONNECT JUMP
+BRK                     EQU $03F0       ; BREAK ADDRESS (AUTOSTART & 2E ONLY!)
+SOFTEV                  EQU $03F2       ; SOFT RESET (AUTOSTART & 2E ONLY!)
+PWRDUP                  EQU $03F4       ; WARM START EOR CHECKSUM
+AMPERV                  EQU $03F5       ; APPLESOFT "&" JUMP
+USRADR                  EQU $03F8       ; CTRL-Y JUMP
+NMI                     EQU $03FB       ; NON-MASKABLE INTERRUPT JUMP
+IRQLOC                  EQU $03FE       ; INTERRUPT ADDRESS LOW
+
+TEXTP1                  EQU $0400       ; START OF TEXT PAGE ONE
+TEXTP2                  EQU $0800       ; START OF TEXT PAGE TWO
+HIRESP1                 EQU $2000       ; START OF HIRES PAGE ONE
+HIRESP2                 EQU $4000       ; START OF HIRES PAGE TWO
+
+IOADR                   EQU $C000       ; KEYBOARD INPUT
+KBDSTR                  EQU $C010       ; KEYSTROBE RESET
+TAPEOUT                 EQU $C020       ; CASSETTE OR AUDIO OUT
+SPKR                    EQU $C030       ; SPEAKER CLICK OUTPUT
+STROBE                  EQU $C040       ; GAME CONNECTOR STROBE
+TXTCLR                  EQU $C050       ; GRAPHICS ON SOFT SWITCH
+TXTSET                  EQU $C051       ; TEXT ON SOFT SWITCH
+MIXCLR                  EQU $C052       ; FULL SCREEN SOFT SWITCH
+MIXSET                  EQU $C053       ; MIXED SCREEN SOFT SWITCH
+LOWSCR                  EQU $C054       ; PAGE ONE SOFT SWITCH
+HISCR                   EQU $C055       ; PAGE TWO SOFT SWITCH
+LORES                   EQU $C056       ; LORES SOFT SWITCH
+HIRES                   EQU $C057       ; HIRES SOFT SWITCH
+PB4                     EQU $C060       ; CASS IN + "FOURTH" PB INPUT "SW3"
+PB1                     EQU $C061       ; OPEN APPLE + "FIRST" PB INPUT "SW0"
+PB2                     EQU $C062       ; CLOSED APPLE + "SECOND" PB INPUT "SW1"
+PB3                     EQU $C063       ; "THIRD" PUSHBUTTON INPUT "SW2"
+PDL0                    EQU $C064       ; GAME PADDLE 0 ANALOG IN
+PDL1                    EQU $C065       ; GAME PADDLE 1 ANALOG IN
+PDL2                    EQU $C066       ; GAME PADDLE 2 ANALOG IN
+PDL3                    EQU $C067       ; GAME PADDLE 3 ANALOG IN
+PTRIG                   EQU $C070       ; ANALOG PADDLE RESET
+
+STEP00                  EQU $C080       ; DISK STEPPER PHASE 0 OFF
+STEP01                  EQU $C081       ; DISK STEPPER PHASE 0 ON
+STEP10                  EQU $C082       ; DISK STEPPER PHASE 1 OFF
+STEP11                  EQU $C083       ; DISK STEPPER PHASE 1 ON
+STEP20                  EQU $C084       ; DISK STEPPER PHASE 2 OFF
+STEP21                  EQU $C085       ; DISK STEPPER PHASE 2 ON
+STEP30                  EQU $C086       ; DISK STEPPER PHASE 3 OFF
+STEP31                  EQU $C087       ; DISK STEPPER PHASE 3 ON
+MOTON                   EQU $C088       ; DISK MAIN MOTOR OFF
+MOTOFF                  EQU $C089       ; DISK MAIN MOTOR ON
+DRV0EN                  EQU $C08A       ; DISK ENABLE DRIVE 1
+DRV1EN                  EQU $C08B       ; DISK ENABLE DRIVE 2
+Q6CLR                   EQU $C08C       ; DISK Q6 CLEAR
+Q6SET                   EQU $C08D       ; DISK 06 SET
+Q7CLR                   EQU $C08E       ; DISK 07 CLEAR
+Q7SET                   EQU $C08F       ; DISK 07 SET
+
+BASICLD                 EQU $E000       ; ENTER BASIC COLD
+BASICWM                 EQU $E003       ; RE-ENTER BASIC WARM
+
+HGR2                    EQU $F3D8       ; APPLESOFT CLEAR TO HIRES 2
+HGR                     EQU $F3E2       ; APPLESOFT CLEAR TO HIRES 1
+BKGND                   EQU $F3F4       ; APPLESOFT HIRES BACKGROUND CLEAR
+HCOLOR                  EQU $F6F0       ; APPLESOFT HIRES COLOR SELECT
+HPOSN                   EQU $F411       ; APPLESOFT HIRES POSITION
+HPLOT                   EQU $F457       ; APPLESOFT HIRES PLOT
+
+PLOT                    EQU $F800       ; PLOT LORES BLOCK
+HLINE                   EQU $F819       ; HORIZ LORES LINE
+VLINE                   EQU $F828       ; VERTICAL LORES LINE
+CLRSCR                  EQU $F832       ; CLEAR FULL LORES SCREEN
+CLRTOP                  EQU $F836       ; CLEAR TOP LORES SCREEN
+GBSCALC                 EQU $F847       ; LORES BASE CALCULATION
+NEXTCOL                 EQU $F85F       ; INCREASE LORES COLOR BY 3
+SETCOL                  EQU $F864       ; SET LORES COLOR
+SCRN                    EQU $F871       ; READ LORES SCREEN COLOR
+PRNTAX                  EQU $F941       ; OUTPUT A THEN X. AS HEX
+PRBLNK                  EQU $F948       ; OUTPUT 3 SPACES VIA BOOKS
+PRBL2                   EQU $F94A       ; OUTPUT X BLANKS VIA HOOKS
+
+REGDSP                  EQU $FAD7       ; DISPLAY WORKING REGISTERS
+PREAD                   EQU $FB1E       ; READ GAME PADDLE X
+INIT                    EQU $FB2F       ; INITIALIZE TEXT SCREEN
+SETTXT                  EQU $FB93       ; SET UP TEXT SCREEN (NOT 2E!)
+SETGR                   EQU $FB40       ; SET UP GRAPHICS SCREEN
+SETWND                  EQU $FB4B       ; SET NORMAL TEXT WINDOW
+BASCALC                 EQU $FBC1       ; CALCULATE TEXT BASE ADDRESS (NOT 2E!}
+BELL1                   EQU $FBD9       ; BEEP SPEAKER IF CTRL-G
+BELL2                   EQU $FBE4       ; BEEP SPEAKER ONCE
+ADVANCE                 EQU $FBF4       ; TEXT CURSOR ONE TO RIGHT
+VIDOUT                  EQU $FBFD       ; OUTPUT ASCII TO SCREEN ONLY
+
+BS                      EQU $FC10       ; BACKSPACE SCREEN
+UP                      EQU $FC1A       ; MOVE SCREEN CURSOR UP ONE LINE
+VTAB                    EQU $FC22       ; VERTICAL SCREEN TAB USING CV
+VTABA                   EQU $FC24       ; VERTICAL SCREEN TAB USING A
+ESC1                    EQU $FC66       ; PROCESS ESCAPE CURSOR MOVES
+CLREOP                  EQU $FC42       ; CLEAR TO END OF PAGE
+HOME                    EQU $FC58       ; CLEAR TEXT SCREEN AND HOME CURSOR
+CR                      EQU $FC62       ; CARRIAGE RETURN TO SCREEN
+LF                      EQU $FC66       ; LINEFEED TO SCREEN ONLY
+SCROLL                  EQU $FC70       ; SCROLL TEXT SCREEN UP ONE
+CLEOL                   EQU $FC9C       ; CLEAR TEXT TO END OF LINE
+WAIT                    EQU $FCA8       ; TIME DELAY SET BY ACCUMULATOR
+RDKEY                   EQU $FD0C       ; GET INPUT CHARACTER VIA HOOKS
+KEYIN                   EQU $FD1B       ; READ THE APPLE KEYBOARD
+RDCHAR                  EQU $FD35       ; GET KEY AND PROCESS ESC A-F
+CANCEL                  EQU $FD62       ; CANCEL KEYBOARD LINE ENTRY
+GETLNZ                  EQU $FD67       ; CR THEN GET KEYBOARD INPUT LINE
+GETLN                   EQU $FD6A       ; GET KEYBOARD INPUT LINE
+GETLN1                  EQU $FD6F       ; GET KBD INPUT, NO PROMPT
+CROUT1                  EQU $FD8B       ; CLEAR EOL THEN CR VIA BOOKS
+CROUT                   EQU $FD8E       ; OUTPUT CR VIA HOOKS
+PRBYTE                  EQU $FDDA       ; OUTPUT FULL A IN HEX TO HOOKS
+PRHEX                   EQU $FDE3       ; OUTPUT LOW A IN HEX TO HOOKS
+COUT                    EQU $FDED       ; OUTPUT CHARACTER VIA HOOKS
+COUT1                   EQU $FDF0       ; OUTPUT CHARACTER TO SCREEN
+
+MOVE                    EQU $FE2C       ; MOVE BLOCK OF MEMORY
+VERIFY                  EQU $FE36       ; VERIFY BLOCK OF MEMORY
+LIST                    EQU $FE5E       ; DISASSEMBLE 20 INSTRUCTIONS
+LIST2                   EQU $FE63       ; DISASSEMBLE •A• INSTRUCTIONS
+SETINV                  EQU $FE80       ; PRINT INVERSE TEXT TO SCREEN
+SETNORM                 EQU $FE84       ; PRINT NORMAL TEXT TO SCREEN
+SETVID                  EQU $FE93       ; GRAB OUTPUT HOOKS FOR SCREEN
+XBASIC                  EQU $FEB0       ; GO BASIC, DESTROYING OLD
+BASCON                  EQU $FEB3       ; GO BASIC, CONTINUING OLD
+TRACE                   EQU $FEC2       ; START TRACING (OLD ROM ONLY!)
+STEP                    EQU $FEC4       ; SINGLE STEP (OLD ROM ONLY!)
+WRITE                   EQU $FECD       ; WRITE TO CASSETTE TAPE
+READ                    EQU $FEFD       ; READ FROM CASSETTE TAPE
+PRERR                   EQU $FF2D       ; PRINT "ERR" TO OUTPUT HOOK
+BELL                    EQU $FF3A       ; OUTPUT BELL TO HOOKS
+IORESR                  EQU $FF3F       ; RESTORE ALL WORKING REGISTERS
+IOSAVE                  EQU $FF4A       ; SAVE ALL WORKING REGISTERS
+RETURN                  EQU $FF58       ; "GUARANTEED" RETURN
+OLDRST                  EQU $FF59       ; OLD RESET, NO AUTOSTART
+MON                     EQU $FF65       ; ENTER MONITOR AND BEEP SPEAKER
+MONZ                    EQU $FF69       ; ENTER MONITOR QUIETLY
+GETNUM                  EQU $FFA7       ; ASCII TO HEX IN 3E & 3F
+
+                                        ; *** HOOKS FOR 2E ONLY! ***
+
+CLRSOCO                 EQU $C000       ; SO STORE OFF (WRITE ONLY)
+SETSOCO                 EQU $C001       ; SO STORE ON (WRITE ONLY)
+RAMRDMN                 EQU $C002       ; READ MAIN MEMORY (WRITE ONLY)
+RAMRDAX                 EQU $C003       ; READ AUXILIARY MEMORY (WRITE ONLY)
+RAMWRMN                 EQU $C004       ; WRITE MAIN MEMORY (WRITE ONLY)
+RAMWRAX                 EQU $C005       ; WRITE AUXILIARY MEMORY (WRITE ONLY)
+SLOTXRM                 EQU $C006       ; INTERNAL ROM AT CXOO (WRITE ONLY)
+SLOTXEX                 EQU $C007       ; SLOT ROM AT CXOO (WRITE ONLY)
+
+MAINZP                  EQU $C008       ; USE MAIN ZERO PAGE (WRITE ONLY)
+ALTZP                   EQU $C009       ; USE ALTERNATE ZERO PAGE (WRITE ONLY)
+SLOT3RM                 EQU $C00A       ; SLOT #3 INTERNAL ROM (WRITE ONLY)
+SLOT3EX                 EQU $C00B       ; SLOT #3 EXTERNAL ROM (WRITE ONLY)
+OFFSOCL                 EQU $C00C       ; TURN 80 COLUMN OFF (WRITE ONLY)
+ONSOCOL                 EQU $C00D       ; TURN 80 COLUMN ON (WRITE ONLY)
+ALTCSOF                 EQU $C00E       ; USE MAIN CHARACTER SET (WRITE ONLY)
+ALTCSON                 EQU $C00F       ; USE ALT CHARACTER SET (WRITE ONLY)
+
+RAMRDS                  EQU $C013       ; 1 READ RAMREAD SWITCH (READ ONLY)
+RAMWTS                  EQU $C014       ; , READ RAMWRITE SWITCH (READ ONLY)
+SLTCXS                  EQU $C015       ; , READ SLOT CX SWITCH (READ ONLY)
+ALTZPS                  EQU $C016       ; , READ ZERO PAGE SWITCH (READ ONLY)
+SLTC3S                  EQU $C017       ; READ SLOT C3 SWITCH (READ ONLY)
+
+S80STR                  EQU $C018       ; READ 80STORE SWITCH (READ ONLY)
+VBL                     EQU $C019       ; VERT. BLANKING >80=BLANK (READ ONLY)
+TEXTS                   EQU $C01A       ; READ TEXT SWITCH (READ ONLY)
+MIXEDS                  EQU $C01B       ; READ MIXED GR SWITCH (READ ONLY)
+PAGE2S                  EQU $C01C       ; READ PAGE 2 SWITCH (READ ONLY)
+HIRESS                  EQU $C01D       ; READ HIRES SWITCH (READ ONLY)
+ALTCSS                  EQU $C01E       ; READ ALTCHAR SET SWITCH (READ ONLY)
+S80COL                  EQU $C01F       ; READ 80 COLUMN SWITCH (READ ONLY)
+
+RB2RAM                  EQU $C080       ; READ BANK 2 RAM
+WB2RAM                  EQU $C081       ; WRITE BANK 2 RAM, READ ROM
+RROM                    EQU $C082       ; READ ROM ONLY, NO WRITE
+RWRAM2                  EQU $C083       ; READ & WRITE RAM2 (HIT TWICE!)
+RRAM1                   EQU $C088       ; READ BANK1 RAM
+WRAM1                   EQU $C0B9       ; WRITE BANK1 RAM, READ ROM
+RB1ROM                  EQU $C08A       ; READ BANK1 ROM
+RWRAM1                  EQU $C08B       ; READ & WRITE RAM1 (HIT TWICE!)

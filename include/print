@@ -1,0 +1,23 @@
+print                   subroutine
+                        pla
+                        sta $06
+                        pla
+                        sta $07
+                        ldy #0
+.loop
+                        inc $06
+                        bne .next
+                        inc $07
+.next
+                        lda ($06),y
+                        beq .done
+                        ora #$80
+                        jsr COUT
+                        bne .loop
+.done
+                        jsr CROUT
+                        inc $06
+                        bne .end
+                        inc $07
+.end
+                        jmp ($06)
