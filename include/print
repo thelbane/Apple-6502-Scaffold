@@ -1,23 +1,51 @@
+; ****************************************
+; print
+; ****************************************
+;
+; A zero-terminated string should immediately follow "jsr print"
+;
+; Example:
+; jsr print
+; byte "HELLO WORLD",0
+; [program resumes here]
+;
+; Destroys A, X, Y
+
 print                   subroutine
+
+zp$                     equ $06         ; Use some of that sweet, sweet zero page memory (non-destructive)
+
+                        ldx zp$         ; Save zero page values to X and temp$
+                        lda zp$+1
+                        sta temp$
+
+                        pla             ; Copy jsr return address from stack to zero page
+                        sta zp$
                         pla
-                        sta $06
-                        pla
-                        sta $07
-                        ldy #0
+                        sta zp$+1
+
+                        ldy #0          ; Y always 0 since we're incrementing the addr itself
 .loop
-                        inc $06
+                        inc zp$         ; Increment zero page addr
                         bne .next
-                        inc $07
+                        inc zp$+1
 .next
-                        lda ($06),y
-                        beq .done
-                        ora #$80
-                        jsr COUT
-                        bne .loop
+                        lda (zp$),y     ; Read the next character
+                        beq .done       ; Done if 0 (string terminator)
+                        ora #$80        ; Else make printable
+                        jsr COUT        ; Output the character to the screen
+                        bne .loop       ; Repeat
 .done
-                        jsr CROUT
-                        inc $06
-                        bne .end
-                        inc $07
-.end
-                        jmp ($06)
+                        jsr CROUT       ; Print carriage return at end of string
+
+                        lda zp$+1       ; Copy zero page addr to stack for rts
+                        pha
+                        lda zp$
+                        pha
+
+                        stx zp$         ; Restore zero page values from X and temp$
+                        lda #00         ; temp$ points to the immediate value here (self-modifying)
+temp$                   equ .-1
+                        sta zp$+1
+
+                        rts             ; All done printing... that was kind of a pain

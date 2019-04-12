@@ -1,6 +1,13 @@
+; ****************************************
+; stdio
+; ****************************************
+;
 ; Source:
 ; Assembly Cookbook for the Apple II/IIe part two by Don Lancaster
 ; https://www.americanradiohistory.com/Archive-Don-Lancaster/aacb2.pdf
+;
+; NOTE: This was copied from the above PDF and required some gentle
+; massaging due to OCR errors. Not guaranteed to be typo-free.
 
 WNDLFT                  EQU $20         ; SCROLL WINDOW LEFT
 WNDWDTH                 EQU $21         ; SCROLL WINDOW WIDTH
