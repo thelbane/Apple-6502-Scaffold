@@ -6,6 +6,7 @@
                         processor 6502
                         incdir "include"
 
+                        echo "main length:",[main_end-main]d,"bytes"
 ; ****************************************
 ; main
 ; ****************************************
@@ -31,3 +32,5 @@ main                    subroutine
 
                         include "stdio"
                         include "print"
+
+main_end
